@@ -10,7 +10,7 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wpa
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLine, INT nCmdShow) {
 
 	// ウィンドウ初期化
-	WNDCLASSA window_class = {
+	WNDCLASS window_class = {
 		CS_HREDRAW | CS_VREDRAW,
 		WindowProcedure,
 		0,
@@ -20,20 +20,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 		LoadCursor(nullptr, IDC_ARROW),
 		nullptr,
 		nullptr,
-		"WindowClass",
+		TEXT("WindowClass"),
 	};
 
 	// ウィンドウ登録
-	if (RegisterClassA(&window_class) == 0) {
+	if (RegisterClass(&window_class) == 0) {
 		return 0;
 	}
 
 	int width = 640;
 	int height = 480;
 	// ウィンドウ作成
-	HWND window_handle = CreateWindowA(
-		"WindowClass",
-		"ウィンドウ作成課題",
+	HWND window_handle = CreateWindow(
+		TEXT("WindowClass"),
+		TEXT("ウィンドウ作成課題"),
 		(WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME),
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -91,12 +91,16 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 		}
 		else {
 			// ゲーム処理
+			StartDrawing();
+
+			DrawPorigon_Triangle();
+			DrawPorigon_Rect();
+
+			FinishDrawing();
 		}
 	}
 
-	if (InitDirectGraphics(window_handle) == false) {
-		return 0;
-	}
+	ReleaseDirectGraphics();
 
 	return 0;
 }

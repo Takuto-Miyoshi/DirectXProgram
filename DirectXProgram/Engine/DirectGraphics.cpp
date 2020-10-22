@@ -10,8 +10,6 @@ bool InitDirectGraphics(HWND window_handle) {
 		return false; // 初期化失敗
 	}
 
-	return true;
-
 	// デバイスの情報を設定する構造体
 	D3DPRESENT_PARAMETERS parameters;
 
@@ -36,6 +34,9 @@ bool InitDirectGraphics(HWND window_handle) {
 	if (FAILED(result)) {
 		return false;
 	}
+
+	return true;
+
 }
 
 void ReleaseDirectGraphics() {
@@ -48,4 +49,60 @@ void ReleaseDirectGraphics() {
 		g_Interface->Release();
 		g_Interface = nullptr;
 	}
+}
+
+void StartDrawing() {
+
+	g_Device->Clear(
+		0,
+		nullptr,
+		D3DCLEAR_TARGET,
+		D3DCOLOR_XRGB( 0, 0, 0 ),
+		1.0f,
+		0
+	);
+
+	g_Device->BeginScene();
+}
+
+void FinishDrawing() {
+
+	g_Device->EndScene();
+
+	g_Device->Present( nullptr, nullptr, nullptr, nullptr );
+}
+
+void DrawPorigon_Triangle() {
+	CustomVertex vertices[] = {
+		{ 300, 100, 0, 1, 0xff0000},
+		{ 400, 200, 0, 1, 0xff0000},
+		{ 200, 200, 0, 1, 0xff0000},
+	};
+
+	g_Device->SetFVF( D3DFVF_XYZRHW | D3DFVF_DIFFUSE );
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLELIST,
+		1,
+		vertices,
+		sizeof( CustomVertex )
+	);
+}
+
+void DrawPorigon_Rect() {
+	CustomVertex vertices[] = {
+		{ 300, 300, 0, 1, 0x00ffff},
+		{ 500, 300, 0, 1, 0x0088ff},
+		{ 500, 400, 0, 1, 0x00ff88},
+		{ 300, 400, 0, 1, 0x008888}
+	};
+
+	g_Device->SetFVF( D3DFVF_XYZRHW | D3DFVF_DIFFUSE );
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof( CustomVertex )
+	);
 }
