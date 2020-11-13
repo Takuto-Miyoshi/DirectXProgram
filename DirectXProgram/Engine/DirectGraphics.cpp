@@ -1,19 +1,24 @@
-#include "DirectGraphics.h"
+ï»¿#include "DirectGraphics.h"
 
 LPDIRECT3D9 g_Interface = nullptr;
 IDirect3DDevice9* g_Device = nullptr;
+LPDIRECT3DTEXTURE9 g_Textures[TextureID::TexIDMax];
+
+LPCWSTR g_TextureNameList[] = {
+	TEXT( "Sprite/Picasso.bmp" )
+};
 
 bool InitDirectGraphics(HWND window_handle) {
 	g_Interface = Direct3DCreate9(D3D_SDK_VERSION);
 
 	if (g_Interface == nullptr) {
-		return false; // ‰Šú‰»Ž¸”s
+		return false; // åˆæœŸåŒ–å¤±æ•—
 	}
 
-	// ƒfƒoƒCƒX‚Ìî•ñ‚ðÝ’è‚·‚é\‘¢‘Ì
+	// ãƒ‡ãƒã‚¤ã‚¹ã®æƒ…å ±ã‚’è¨­å®šã™ã‚‹æ§‹é€ ä½“
 	D3DPRESENT_PARAMETERS parameters;
 
-	// ƒf[ƒ^‚ð0‚Å‰Šú‰»
+	// ãƒ‡ãƒ¼ã‚¿ã‚’0ã§åˆæœŸåŒ–
 	ZeroMemory(&parameters, sizeof(D3DPRESENT_PARAMETERS));
 
 	parameters.BackBufferCount = 1;
@@ -98,6 +103,53 @@ void DrawPorigon_Rect() {
 	};
 
 	g_Device->SetFVF( D3DFVF_XYZRHW | D3DFVF_DIFFUSE );
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof( CustomVertex )
+	);
+}
+
+bool LoadTexture( TextureID tex_id ){
+	HRESULT hr = D3DXCreateTextureFromFile(
+		g_Device,
+		g_TextureNameList[tex_id],
+		&g_Textures[tex_id]
+	);
+
+	if ( FAILED( hr ) ){
+		return false;
+	}
+
+	return true;
+}
+
+void ReleaseTexture(){
+	for ( int i = 0; i < TextureID::TexIDMax; i++ ){
+		if ( g_Textures[i] != nullptr ){
+			g_Textures[i]->Release();
+			g_Textures[i] = nullptr;
+		}
+	}
+}
+
+void DrawTexture( TextureID tex_id ){
+	if ( g_Textures[tex_id] == nullptr ){
+		return;
+	}
+
+	CustomVertex vertices[] = {
+		{  0,   0, 0, 1, 0xffffff, 0.0f, 0.0f},
+		{100,   0, 0, 1, 0xffffff, 1.0f, 0.0f},
+		{100, 100, 0, 1, 0xffffff, 1.0f, 1.0f},
+		{  0, 100, 0, 1, 0xffffff, 0.0f, 1.0f}
+	};
+
+	g_Device->SetFVF( D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1 );
+
+	g_Device->SetTexture( 0, g_Textures[tex_id] );
 
 	g_Device->DrawPrimitiveUP(
 		D3DPT_TRIANGLEFAN,

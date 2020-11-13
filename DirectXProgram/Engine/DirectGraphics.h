@@ -1,4 +1,4 @@
-#ifndef DIRECT_GRAPHICS
+﻿#ifndef DIRECT_GRAPHICS
 #define DIRECT_GRAPHICS
 
 #include <d3d9.h>
@@ -12,6 +12,14 @@ struct CustomVertex {
 	float rhw;
 
 	DWORD color;
+
+	float tu;
+	float tv;
+};
+
+enum TextureID{
+	TexIDPlayer,
+	TexIDMax
 };
 
 bool InitDirectGraphics(HWND window_handle);
@@ -23,5 +31,10 @@ void FinishDrawing();
 
 void DrawPorigon_Triangle();
 void DrawPorigon_Rect();
+void DrawTexture( TextureID tex_id );
+
+bool LoadTexture( TextureID tex_id );
+
+void ReleaseTexture();
 
 #endif // !DIRECT_GRAPHICS

@@ -1,15 +1,16 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
 #include "Engine/DirectGraphics.h"
+#include "Engine/DirectInput.h"
 
-// ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚Ìì¬
+// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã®ä½œæˆ
 LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wparam, LPARAM lparam) {
 	return DefWindowProc(window_handle, message_id, wparam, lparam);
 }
 
-// ƒƒCƒ“ŠÖ”
+// ãƒ¡ã‚¤ãƒ³é–¢æ•°
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLine, INT nCmdShow) {
 
-	// ƒEƒBƒ“ƒhƒE‰Šú‰»
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆæœŸåŒ–
 	WNDCLASS window_class = {
 		CS_HREDRAW | CS_VREDRAW,
 		WindowProcedure,
@@ -23,17 +24,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 		TEXT("WindowClass"),
 	};
 
-	// ƒEƒBƒ“ƒhƒE“o˜^
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç™»éŒ²
 	if (RegisterClass(&window_class) == 0) {
 		return 0;
 	}
 
 	int width = 640;
 	int height = 480;
-	// ƒEƒBƒ“ƒhƒEì¬
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 	HWND window_handle = CreateWindow(
 		TEXT("WindowClass"),
-		TEXT("ƒEƒBƒ“ƒhƒEì¬‰Û‘è"),
+		TEXT("ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆèª²é¡Œ"),
 		(WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME),
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -71,14 +72,22 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 		SWP_NOMOVE
 	);
 
-	// ƒEƒBƒ“ƒhƒE‚Ì•\¦
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º
 	ShowWindow(window_handle, SW_SHOW);
 
 	if (InitDirectGraphics(window_handle) == false) {
 		return 0;
 	}
 
-	// ƒƒCƒ“ƒ‹[ƒv
+	if ( InitDirectInput() == false ){
+		return 0;
+	}
+
+	if ( LoadTexture( TextureID::TexIDPlayer ) == false ){
+		return 0;
+	}
+
+	// ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	while (true) {
 		MSG message;
 		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
@@ -90,16 +99,22 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 			DispatchMessage(&message);
 		}
 		else {
-			// ƒQ[ƒ€ˆ—
+			// ã‚²ãƒ¼ãƒ å‡¦ç†
+
+			UpdateDirectInput();
+
 			StartDrawing();
 
-			DrawPorigon_Triangle();
-			DrawPorigon_Rect();
+			if ( IsKeyHeld( DIK_A ) ){
+				DrawTexture( TextureID::TexIDPlayer );
+			}
 
 			FinishDrawing();
 		}
 	}
 
+	ReleaseTexture();
+	ReleaseDirectInput();
 	ReleaseDirectGraphics();
 
 	return 0;
