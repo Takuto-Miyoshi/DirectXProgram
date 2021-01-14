@@ -4,7 +4,16 @@
 
 // ウィンドウプロシージャの作成
 LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wparam, LPARAM lparam) {
-	return DefWindowProc(window_handle, message_id, wparam, lparam);
+	switch( message_id )
+	{
+	case WM_CLOSE:
+		PostQuitMessage( 0 );
+		break;
+	default:
+		return DefWindowProc( window_handle, message_id, wparam, lparam );
+		break;
+	}
+	return 0;
 }
 
 // メイン関数
@@ -87,33 +96,50 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 		return 0;
 	}
 
+	if( LoadXFile( TEXT( "Witchwait.x" ) ) == false ) return 0;
+
 	// メインループ
-	while (true) {
+	while( true ) {
 		MSG message;
-		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
-			if (message.message == WM_QUIT) {
+		if( PeekMessage( &message, nullptr, 0, 0, PM_REMOVE ) ) {
+			if( message.message == WM_QUIT ) {
 				break;
 			}
 
-			TranslateMessage(&message);
-			DispatchMessage(&message);
+			TranslateMessage( &message );
+			DispatchMessage( &message );
 		}
 		else {
 			// ゲーム処理
 
 			UpdateDirectInput();
 
+			SetUpView();
 			StartDrawing();
+			SetUpProjection();
 
-			if ( IsKeyHeld( DIK_A ) ){
-				DrawTexture( TextureID::TexIDPlayer );
-			}
+			// ----- 3D -------
+
+			DrawXFile( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f );
+
+			//Draw3DPorigon(
+			//	{ -5.0f, -5.0f, 0.0f, 0xffff0000 },
+			//	{ 0.0f,  5.0f, 0.0f, 0xffff0000 },
+			//	{ 5.0f, -5.0f, 0.0f, 0xffff0000 }
+			//);
+
+			// ----- 2D -----
+
+			//DrawTexture( TextureID::TexIDPlayer );
 
 			FinishDrawing();
+
+			// ---------------
 		}
 	}
 
 	ReleaseTexture();
+	ReleaseXFile();
 	ReleaseDirectInput();
 	ReleaseDirectGraphics();
 

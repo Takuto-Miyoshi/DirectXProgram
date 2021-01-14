@@ -6,11 +6,21 @@
 
 #include <dinput.h>
 
+enum InputState{
+	NoHold,
+	Pushed,
+	Held,
+	Released
+};
+
 bool InitDirectInput();
 
 void UpdateDirectInput();
-bool IsKeyHeld( int key );
 
 void ReleaseDirectInput();
+
+bool IsKeyHeld( int key );
+bool IsKeyPushed( int key );
+bool IsKeyReleased( int key );
 
 #endif // DIRECT_INPUT_H
