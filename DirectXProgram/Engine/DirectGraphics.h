@@ -61,4 +61,6 @@ void DrawXFile( float posX_, float posY_, float posZ_, float radX_, float radY_,
 
 void ReleaseXFile();
 
+void UpdateTPSCamera( float targetPosX, float targetPosY, float targetPosZ, float angle );
+
 #endif // !DIRECT_GRAPHICS

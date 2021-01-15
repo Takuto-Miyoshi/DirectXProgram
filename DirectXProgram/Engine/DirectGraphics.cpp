@@ -342,3 +342,33 @@ void DrawXFile( float posX_, float posY_, float posZ_, float radX_, float radY_,
 		g_XFile.Meshed->DrawSubset( i );
 	}
 }
+
+void UpdateTPSCamera( float targetPosX, float targetPosY, float targetPosZ, float angle ){
+	float vecX = sinf( D3DXToRadian( angle ) );
+	float vecZ = cosf( D3DXToRadian( angle ) );
+
+	vecX *= -1.0f;
+	vecZ *= -1.0f;
+
+	float distance = 200.0f;
+	vecX *= distance;
+	vecZ *= distance;
+
+	float newCamPosX = targetPosX + vecX;
+	float newCamPosY = targetPosY;
+	float newCamPosZ = targetPosZ + vecZ;
+
+	D3DXMATRIX matrix;
+	D3DXVECTOR3 cameraPos = D3DXVECTOR3( newCamPosX, newCamPosY, newCamPosZ );
+	D3DXVECTOR3 eyePos = D3DXVECTOR3( targetPosX, targetPosY, targetPosZ );
+	D3DXVECTOR3 upVec = D3DXVECTOR3( 0.0f, 1.0f, 0.0f );
+
+	D3DXMatrixLookAtLH(
+		&matrix,
+		&cameraPos,
+		&eyePos,
+		&upVec
+	);
+
+	g_Device->SetTransform( D3DTS_VIEW, &matrix );
+}

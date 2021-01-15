@@ -98,6 +98,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 
 	if( LoadXFile( TEXT( "Witchwait.x" ) ) == false ) return 0;
 
+	float angle = 0.0f;
+	float posX = 0.0f;
+	float posY = 0.0f;
+	float posZ = 0.0f;
+
 	// メインループ
 	while( true ) {
 		MSG message;
@@ -114,7 +119,29 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmpLi
 
 			UpdateDirectInput();
 
-			SetUpView();
+			if( IsKeyHeld( DIK_LEFTARROW ) ){
+				angle -= 3.0f;
+			}
+			else if( IsKeyHeld( DIK_RIGHTARROW ) ){
+				angle += 3.0f;
+			}
+
+			if( IsKeyHeld( DIK_UPARROW ) ){
+				float vecZ = cosf( D3DXToRadian( angle ) );
+				float vecX = sinf( D3DXToRadian( angle ) );
+				float speed = 2.0f;
+
+				posX += vecX * speed;
+				posZ += vecZ * speed;
+			}
+
+			if( IsKeyHeld( DIK_SPACE ) ){
+				UpdateTPSCamera( posX, posY, posZ, angle );
+			}
+			else{
+				SetUpView();
+			}
+
 			StartDrawing();
 			SetUpProjection();
 
